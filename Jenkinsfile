@@ -1,9 +1,9 @@
 pipeline {
     agent { label "minion-farm"}
     stages {
-        stage('Update Ubuntu') {
+        stage('Update node') {
             steps {
-                sh 'sudo apt-get update'
+                sh 'sudo dnf -y update'
             }    
         }
         stage('Install ChefDK') {
@@ -13,8 +13,8 @@ pipeline {
                     if (chefdkExists) {
                         echo 'Skipping Chef install...already installed'
                     }else{
-                        sh 'wget https://packages.chef.io/files/stable/chefdk/3.9.0/ubuntu/16.04/chefdk_3.9.0-1_amd64.deb'
-                        sh 'sudo dpkg -i chefdk_3.9.0-1_amd64.deb'
+                        sh 'wget https://packages.chef.io/files/stable/chefdk/4.0.60/el/7/chefdk-4.0.60-1.el7.x86_64.rpm'
+                        sh 'sudo rpm -ivh chefdk-4.0.60-1.el7.x86_64.rpm'
                     }
                 }
             }
@@ -31,13 +31,16 @@ pipeline {
                     if (dockerExists) {
                         echo 'Skipping Docker install...already installed'
                     }else{
-                        sh 'wget https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/containerd.io_1.2.5-1_amd64.deb'
-                        sh 'wget https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce-cli_18.09.6~3-0~ubuntu-xenial_amd64.deb'
-                        sh 'wget https://download.docker.com/linux/ubuntu/dists/xenial/pool/stable/amd64/docker-ce_18.09.6~3-0~ubuntu-xenial_amd64.deb'
-                        sh 'sudo dpkg -i containerd.io_1.2.5-1_amd64.deb'
-                        sh 'sudo dpkg -i docker-ce-cli_18.09.6~3-0~ubuntu-xenial_amd64.deb'
-                        sh 'sudo dpkg -i docker-ce_18.09.6~3-0~ubuntu-xenial_amd64.deb'
-                        sh 'sudo usermod -aG root,docker ubuntu'
+                        sh 'sudo yum install -y git yum-utils'
+                        sh 'sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo'
+                        sh 'sudo yum makecache fast'
+                        sh 'sudo yum -y install docker-ce'
+                        sh 'sudo systemctl enable docker'
+                        sh 'sudo systemctl start docker'
+                        sh 'sudo usermod -aG docker $USER'
+                        sh 'sudo systemctl stop getty@tty1.service'
+                        sh 'sudo systemctl mask getty@tty1.service'
+                        
                     }    
                     sh 'sudo docker run hello-world'
                 }
@@ -45,7 +48,7 @@ pipeline {
         }
         stage('Install Ruby and Test Kitchen') {
             steps {
-                sh 'sudo apt-get install -y rubygems ruby-dev'
+                sh 'sudo dnf install -y rubygems ruby-devel'
                 sh 'chef gem install kitchen-docker'
             }
         }
