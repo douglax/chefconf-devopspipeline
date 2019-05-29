@@ -14,7 +14,7 @@ describe file('/var/www/html/index.html') do
   its('content') { should match(/Hello World/) } 
 end
 
-describe upstart_service('httpd') do
+describe service('httpd') do
    it { should be_enabled }
    it { should be_running }
 end
