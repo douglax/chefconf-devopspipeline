@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Download Cookbook') {
             steps {
-                git credentialsId: 'github-creds', url: 'git@github.com:douglax/chefconf-devopspipeline.git'
+                git credentialsId: 'github-creds', url: 'git@github.com:douglax/chefconf-devopspipeline.git', branch: 'centos'
             }
         }
         stage('Install Docker ') {
