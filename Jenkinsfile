@@ -21,7 +21,7 @@ pipeline {
         }
         stage('Download Cookbook') {
             steps {
-                git credentialsId: 'github-creds', url: 'git@github.com:technotrainertm1/apache.git'
+                git credentialsId: 'github-creds', url: 'git@github.com:douglax/chefconf-devopspipeline.git'
             }
         }
         stage('Install Docker ') {
@@ -37,7 +37,7 @@ pipeline {
                         sh 'sudo yum -y install docker-ce'
                         sh 'sudo systemctl enable docker'
                         sh 'sudo systemctl start docker'
-                        sh 'sudo usermod -aG docker $USER'
+                        // sh 'sudo usermod -aG docker $USER'  <- verify container user
                         sh 'sudo systemctl stop getty@tty1.service'
                         sh 'sudo systemctl mask getty@tty1.service'
                         
