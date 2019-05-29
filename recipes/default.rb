@@ -3,12 +3,12 @@
 # Recipe:: default
 #
 # Copyright:: 2019, The Authors, All Rights Reserved.
-package 'apache2'
+package 'httpd'
 
 file '/var/www/html/index.html' do
-  content "<h2>This is: #{node['name']}</h2><h1>Hello ChefConf2019!!</h1>"
+  content "<h2>This is: #{node['name']}</h2><h1>Hello World!!</h1>"
 end
 
-service 'apache2' do
+service 'httpd' do
   action [ :enable, :start ]
 end
